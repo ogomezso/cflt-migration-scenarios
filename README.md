@@ -5,10 +5,15 @@ Apache Kafka to CP Migration scenarios runbook
 
 ## Azure setup
 
-1. create resource group ****migrations****
-2. log into azure
+1. log into azure
 ```bash
 az login
+```
+2. create resource group ****migrations****
+```shell
+az group create --location westeurope \
+                --name migrations \
+                --tags 'owner_email=ogomezsoriano@confluent.io'
 ```
 3. find the account id (for example for a single account present)
 ```bash
