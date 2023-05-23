@@ -2,8 +2,9 @@
 
 Apache Kafka to CP Migration scenarios runbook
 
+## Source cluster
 
-## Azure setup
+### Azure setup
 
 1. log into azure
 ```bash
@@ -97,7 +98,7 @@ az network vnet create \
 }
 ```
 
-## Terraform provisioning
+### Terraform provisioning
 
 1. setup env
 ```bash
@@ -124,7 +125,10 @@ export TF_VAR_c3_count=1
 ```bash
 git clone git@github.com:ogomezso/tf-cp-cloud-infra-provision.git
 cd azure
-terraform init
+tf init -backend-config "resource_group_name=migrations" \
+ -backend-config "storage_account_name=migrationstfstateazure" \
+ -backend-config "container_name=tfstate" \
+ -backend-config "key=terraform.tfstate"
 terraform plan -out main.tfplan
 terraform apply "main.tfplan"
 ```
