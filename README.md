@@ -32,6 +32,7 @@ scp migrations-SSHKey azureuser@20.224.156.254:/home/azureuser/
 ssh azureuser@20.224.156.254 -i ~/.ssh/migrations-SSHKey
 chmod 400 /home/azureuser/migrations-SSHKey
 ```
+Note: For simplicity, this scenario will use the same key pairs for all the machines, including bastion host
 
 ## Azure setup
 
