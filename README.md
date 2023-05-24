@@ -204,6 +204,25 @@ echo "test message" |  kafkacat -b kafka1 -t test -P
 # test consumer
 kafkacat -b kafka1 -t test
 ```
+### Horton Schema Registry deployment
+
+```bash
+# git clone
+git clone git@github.com:vcosqui/ansible-horton-sr-deployment.git
+cd ansible-horton-sr-deployment
+
+# set ansible ssh key
+export ANSIBLE_KEY_FILE=/home/azureuser/.ssh/migrations-SSHKey
+
+# ping hosts
+make ping-hosts
+# install SR
+make install 
+# test SR
+make test
+
+## http://migrations-migrations-source-subnet-sr-0:9090/api/v1/confluent/subjects
+```
 
 ## Destination cluster deployment
 
