@@ -7,6 +7,15 @@ tags: ansible, azure, cloudera, migrations, terraform
 
 Apache Kafka to CP Migration scenarios runbook
 
+# Table of contents
+1. [Pre-requisites](#Pre-requisites)
+2. [Azure setup](#Azure-setup)
+    1. [Log into azure](#Log-into-azure)
+3. [Source cluster deployment](#Source-cluster-deployment)
+4. [Destination cluster deployment](#Destination-cluster-deployment)
+5. [Source resources](#Source-resources)
+6. [Cluster linking](#Cluster-linking)
+
 ## Pre-requisites
 
 A bastion with ssh access to all hosts has been created
@@ -306,7 +315,7 @@ curl -s -X POST -H "Content-Type: application/json" --data "$SR" http://migratio
 
 ```
 
-# Cluster linking
+## Cluster linking
 
 ### Temporary workaround
 
@@ -323,7 +332,7 @@ sudo tee -a /etc/hosts > /dev/null <<'EOF'
 EOF
 ```
 
-## Create cluster link
+### Create cluster link
 
 ```bash
 # include all consumer group offsets in the link
