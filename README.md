@@ -23,6 +23,8 @@ The following tools must be installed
 apt-add-repository ppa:ansible/ansible
 apt update
 apt install make ansible python3-pip kafkacat
+# install confluent platform cli
+curl -sL --http1.1 https://cnfl.io/cli | sh -s -- latest
 ```
 
 The [private key](#Create-key-pair) must be present and have the right permissions
@@ -204,6 +206,7 @@ echo "test message" |  kafkacat -b kafka1 -t test -P
 # test consumer
 kafkacat -b kafka1 -t test
 ```
+
 ### Horton Schema Registry deployment
 
 ```bash
@@ -220,8 +223,6 @@ make ping-hosts
 make install 
 # test SR
 make test
-
-## http://migrations-migrations-source-subnet-sr-0:9090/api/v1/confluent/subjects
 ```
 
 ## Destination cluster deployment
@@ -291,4 +292,69 @@ ansible-playbook -i hosts.yml confluent.platform.validate_hosts
 # install confluent platform
 ansible-playbook -i hosts.yml confluent.platform.all
 
+```
+
+## Source resources (schemas, topics, data..)
+
+```bash
+# orders schema
+cat orders.schema
+{"schema": "{ \"type\": \"record\", \"name\": \"orders\", \"fields\": [{\"name\": \"ordertime\", \"type\": \"long\"}, {\"name\": \"orderid\", \"type\": \"int\"}, {\"name\": \"itemid\", \"type\": \"string\"}, {\"name\": \"orderunits\", \"type\": \"double\"}, {\"name\": \"address\", \"type\": {\"fields\": [{\"name\": \"city\", \"type\": \"string\"}, {\"name\": \"state\", \"type\": \"string\"}, {\"name\": \"zipcode\", \"type\": \"long\"}], \"name\": \"address\", \"type\": \"record\"}}] }" }
+export SR=$(cat orders.schema)
+curl -s -X POST -H "Content-Type: application/json" --data "$SR" http://migrations-migrations-source-subnet-sr-0:9090/api/v1/confluent/subjects/test3-value/versions
+{"id":1}
+
+```
+
+# Cluster linking
+
+### Temporary workaround
+
+While broker hosts are not available in public DNS servers we have to temporally modify the destination brokers to be able to resolve the advertised hosts of the source brokers
+
+```bash
+# for each destination broker
+ssh kafka@migrations-migrations-destination-subnet-broker-2 -i ~/.ssh/migrations-SSHKey
+# append to hosts file
+sudo tee -a /etc/hosts > /dev/null <<'EOF'
+10.1.0.5        kafka1
+10.1.0.10       kafka2
+10.1.0.8        kafka3
+EOF
+```
+
+## Create cluster link
+
+```bash
+# include all consumer group offsets in the link
+cat << EOF > test-link-consumer-group.json
+{"groupFilters": [{"name": "*","patternType": "LITERAL","filterType": "INCLUDE"}]}
+EOF
+
+# configure the link source
+cat << EOF > test-link.properties
+bootstrap.servers=kafka1:9092
+consumer.offset.sync.enable=true
+consumer.offset.sync.ms=5000
+EOF
+
+# create the link
+./confluent-7.4.0/bin/kafka-cluster-links \
+--bootstrap-server migrations-migrations-destination-subnet-broker-2:9092 \
+-create --link test-link \
+--config-file ./test-link.properties \
+--consumer-group-filters-json-file ./test-link-consumer-group.json
+
+# list links
+./confluent-7.4.0/bin/kafka-cluster-links \
+--bootstrap-server migrations-migrations-destination-subnet-broker-2:9092 \
+-list
+Link name: 'test-link', link ID: 'sTN9wWt5RMqSKLNuqOS5hg', remote cluster ID: 'IggAznuXSE6TONUPl4stUQ', local cluster ID: 'PaT_OOzxRrW4emipXhNpAw', remote cluster available: 'true', link state: 'ACTIVE'
+
+# check link status
+./confluent-7.4.0/bin/kafka-cluster-links \
+--bootstrap-server migrations-migrations-destination-subnet-broker-2:9092 \
+-describe --link test-link
+Link name: 'test-link', link ID: 'sTN9wWt5RMqSKLNuqOS5hg', remote cluster ID: 'IggAznuXSE6TONUPl4stUQ', local cluster ID: 'PaT_OOzxRrW4emipXhNpAw', link mode: 'DESTINATION', connection mode: 'OUTBOUND', link state: 'ACTIVE', link coordinator id: '0', link coordinator host: 'migrations-migrations-destination-subnet-broker-0', topics: []
+Configs: consumer.offset.sync.ms=5000,bootstrap.servers=kafka1:9092,consumer.offset.sync.enable=true,consumer.offset.group.filters={"groupFilters": [{"name": "*","patternType": "LITERAL","filterType": "INCLUDE"}]},local.listener.name=INTERNAL
 ```
