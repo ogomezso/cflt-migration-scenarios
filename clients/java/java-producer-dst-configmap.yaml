@@ -1,0 +1,15 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: clients
+  name: java-producer-config
+  annotations:
+    reloader.stakater.com/match: "true"
+data:
+  config.properties: |-
+     bootstrap.servers=20.71.157.45:9092
+     security.protocol=PLAINTEXT
+     client.id=chuck-java-producer
+     key.serializer=org.apache.kafka.common.serialization.StringSerializer
+     value.serializer=org.apache.kafka.common.serialization.StringSerializer
+     topic=chuck-topic

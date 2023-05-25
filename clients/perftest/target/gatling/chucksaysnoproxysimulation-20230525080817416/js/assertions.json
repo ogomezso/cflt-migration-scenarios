@@ -1,0 +1,10 @@
+{
+  "simulation": "org.github.ogomezso.perftest.ChuckSaysNoProxySimulation",
+  "simulationId": "chucksaysnoproxysimulation-20230525080817416",
+  "start": 1685002098727,
+  "description": "",
+  "scenarios": ["ChuckSaysNoProxyProducer"],
+  "assertions": [
+
+  ]
+}

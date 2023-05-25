@@ -2,3 +2,4 @@
 **terraform.*
 *.plan
 *.pem
+.vscode
