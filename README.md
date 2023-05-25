@@ -11,10 +11,26 @@ Apache Kafka to CP Migration scenarios runbook
 1. [Pre-requisites](#Pre-requisites)
 2. [Azure setup](#Azure-setup)
     1. [Log into azure](#Log-into-azure)
+    2. [Create resource group and app registration](#Create-resource-group-and-app-registration)
+    3. [Find the account id](#Find-the-account-id)
+    4. [Set subscription](#Set-subscription)
+    5. [Create an identity](#Create-an-identity)
+    6. [Set azure environment variables](#Set-azure-environment-variables)
+    7. [Create key pair](#Create-key-pair)
+    8. [Create network](#Create-network)
 3. [Source cluster deployment](#Source-cluster-deployment)
+   1. [Set source environment variables](#Set-source-environment-variables)
+   2. [Prepare and run source deployment](#Prepare-and-run-source-deployment)
+   3. [OS Source Kafka deployment](#OS-Source-Kafka-deployment)
+   4. [Horton Schema Registry deployment](#Horton-Schema-Registry-deployment)
 4. [Destination cluster deployment](#Destination-cluster-deployment)
+   1. [Set destination environment variables](#Set-destination-environment-variables)
+   2. [Prepare and run destination deployment](#Prepare-and-run-destination-deployment)
+   3. [Confluent Platform deployment](#Confluent-Platform-deployment)
 5. [Source resources](#Source-resources)
 6. [Cluster linking](#Cluster-linking)
+   1. [Temporary workaround](#Temporary-workaround)
+   2. [Create cluster link](#Create-cluster-link)
 
 ## Pre-requisites
 
@@ -71,7 +87,7 @@ echo $ACCOUNT_ID
 54ff81a0-e7f6-4919-9053-4cdd1c5f5ae1
 ```
 
-### Set subscription to match the account id
+### Set subscription
 
 ```bash
 az account set --subscription "$ACCOUNT_ID"
@@ -91,7 +107,7 @@ The output includes credentials that you must protect. Be sure that you do not i
 }
 ```
 
-### Set environment variables
+### Set azure environment variables
 
 ```bash
 export ARM_CLIENT_ID="*** application id ***"
@@ -121,7 +137,7 @@ az network vnet create \
 
 ## Source cluster deployment
 
-### Set environment variables
+### Set source environment variables
 
 ```bash
 export TF_VAR_pub_key_path="~/.ssh/migrations-SSHKey.pub"
@@ -144,7 +160,7 @@ export TF_VAR_ksql_count=1
 export TF_VAR_c3_count=1
 ```
 
-### Prepare and run deployment
+### Prepare and run source deployment
 
 ```bash
 # clone terraform project
@@ -236,7 +252,7 @@ make test
 
 ## Destination cluster deployment
 
-### Set environment variables
+### Set destination environment variables
 
 ```bash
 export TF_VAR_pub_key_path="~/.ssh/migrations-SSHKey.pub"
@@ -259,7 +275,7 @@ export TF_VAR_ksql_count=1
 export TF_VAR_c3_count=1
 ```
 
-### Prepare and run deployment
+### Prepare and run destination deployment
 
 ```bash
 # clone terraform project
