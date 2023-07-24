@@ -1,0 +1,16 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: clients
+  name: java-consumer-config
+  annotations:
+    reloader.stakater.com/match: "true"
+data:
+  config.properties: |-
+     bootstrap.servers=kafka-bootstrap.confluent.svc.cluster.local:9092
+     security.protocol=PLAINTEXT
+     key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+     value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+     client.id=chuck-consumer
+     group.id=chuck-cg
+     topic=chuck-java-topic

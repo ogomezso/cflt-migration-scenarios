@@ -1,0 +1,18 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: clients
+  name: java-producer-config
+  annotations:
+    reloader.stakater.com/match: "true"
+data:
+  config.properties: |-
+     bootstrap.servers=pkc-w3on5.europe-west2.gcp.confluent.cloud:9092
+     ssl.endpoint.identification.algorithm=https
+     security.protocol=SASL_SSL
+     sasl.mechanism=PLAIN
+     sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username='CPQHFHNLB76HBCVI' password='A3zSB3fCzcCt0EGOjMCWpr8CnudprITokm/n+JnkfCNsDjHDXSWYirvNvxndE48W';
+     client.id=chuck-java-producer
+     key.serializer=org.apache.kafka.common.serialization.StringSerializer
+     value.serializer=org.apache.kafka.common.serialization.StringSerializer
+     topic=chuck-java-topic

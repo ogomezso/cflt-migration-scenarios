@@ -1,0 +1,26 @@
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: ClusterLink
+metadata:
+  name: chuck-clusterlink-src
+  namespace: confluent
+spec:
+  name: ogomez-chuck-clusterlink
+  sourceInitiatedLink:
+    linkMode: Source
+  destinationKafkaCluster:
+    kafkaRestClassRef:
+      name: krc-cloud
+      namespace: confluent
+    authentication:
+      type: plain
+      jaasConfigPassThrough:
+        secretRef: jaasconfig-ccloud
+    tls:
+      enabled: true
+      secretRef: ccloud-tls-certs
+    bootstrapEndpoint: https://pkc-w3on5.europe-west2.gcp.confluent.cloud:9092
+  sourceKafkaCluster:
+    kafkaRestClassRef:
+      name: krc-cfk
+      namespace: confluent

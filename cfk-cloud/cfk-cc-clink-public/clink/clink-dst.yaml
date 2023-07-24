@@ -1,0 +1,22 @@
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: ClusterLink
+metadata:
+  name: chuck-clusterlink-dst
+  namespace: confluent
+  annotations:
+    platform.confluent.io/http-timeout-in-seconds: "180"
+spec:
+  name: ogomez-chuck-clusterlink
+  sourceInitiatedLink:
+    linkMode: Destination
+  destinationKafkaCluster:
+    kafkaRestClassRef:
+      name: krc-cloud
+      namespace: confluent
+  sourceKafkaCluster:
+    kafkaRestClassRef:
+      name: krc-cfk
+      namespace: confluent
+  mirrorTopics:
+    - name: chuck-java-topic

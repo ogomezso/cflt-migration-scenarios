@@ -1,0 +1,24 @@
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: Kafka
+metadata:
+  name: kafka
+  namespace: confluent
+spec:
+  configOverrides:
+    server:
+    - confluent.cluster.link.enable=true
+  replicas: 3
+  image:
+    application: confluentinc/cp-server:7.4.0
+    init: confluentinc/confluent-init-container:2.6.0
+  dataVolumeCapacity: 100Gi
+  listeners:
+    external:
+      externalAccess:
+        type: staticForHostBasedRouting
+        staticForHostBasedRouting:
+          domain: 34.89.111.203.nip.io
+          port: 9092
+  passwordEncoder:
+    secretRef: password-encoder-secret

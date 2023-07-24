@@ -1,27 +1,3 @@
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  namespace: clients
-  name: namespace-reader
-rules:
-  - apiGroups: ["", "extensions", "apps"]
-    resources: ["configmaps", "pods", "services", "endpoints", "secrets"]
-    verbs: ["get", "list", "watch"]
-
----
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: namespace-reader-binding
-  namespace: clients
-subjects:
-  - kind: ServiceAccount
-    name: default
-    apiGroup: ""
-roleRef:
-  kind: Role
-  name: namespace-reader
-  apiGroup: ""
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -45,25 +21,6 @@ spec:
       labels:
         app: java-producer
     spec:
-      hostAliases:
-      - ip: "20.71.157.45"
-        hostnames:
-        - "migrations-migrations-destination-subnet-broker-0"
-      - ip: "20.71.156.246"
-        hostnames:
-        - "migrations-migrations-destination-subnet-broker-1"
-      - ip: "20.71.157.47"
-        hostnames:
-        - "migrations-migrations-destination-subnet-broker-2"
-      - ip: "13.81.10.122"
-        hostnames:
-        - "kafka1"
-      - ip: "13.81.11.12"
-        hostnames:
-        - "kafka2"
-      - ip: "137.117.211.218"
-        hostnames:
-        - "kafka3"
       containers:
       - name: java-producer
         image: ogomezso/java-cloud-producer:0.0.2
@@ -79,7 +36,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  creationTimestamp: null
   labels:
     app: java-producer
   name: java-producer

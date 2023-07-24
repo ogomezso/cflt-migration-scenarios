@@ -3,3 +3,5 @@
 *.plan
 *.pem
 .vscode
+.env
+**api-key*
